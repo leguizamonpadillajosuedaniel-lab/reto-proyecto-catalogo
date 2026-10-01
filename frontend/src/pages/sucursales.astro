@@ -1,0 +1,12 @@
+---
+import MainLayout from '../layouts/MainLayout.astro';
+const sucursales = [
+  ['Showroom Norte', 'Av. Cristo Redentor, 7mo anillo', '75347939', 'https://maps.app.goo.gl/hcaKtyPP6J6rt8Bk6'],
+  ['Showroom Sur', '4to anillo entre Av. Piraí y Av. Radial 17 1/2', '75508406', 'https://maps.app.goo.gl/VJzErVrH3ksGw7dY9'],
+  ['Virgen de Luján', 'Av. 9no anillo, zona Batéon, frente al surtidor Santa María III', '78110132', 'https://www.google.com/maps?q=-17.735016,-63.101566'],
+  ['Plan 3000', 'Av. El Mechero, barrio Urkupiña, entre Av. Plan 3.000 y Transcontinental', '75567426', 'https://maps.google.com/?q=-17.835846,-63.129219'],
+  ['Santos Dumont', 'Av. Santos Dumont entre 5to y 6to anillo, esquina Av. San Juan de Dios', '77053064', 'https://maps.google.com/?q=-17.838968,-63.180981'],
+  ['Villa 1ro de Mayo', 'Av. Cumavi entre 6to y 7mo anillo, en diagonal al centro 18 de Marzo', '69141000', 'https://maps.google.com/?q=-17.792315,-63.123684'],
+];
+---
+<MainLayout title="Dónde comprar | Power Motorcycle"><section class="bg-power-charcoal py-16 text-white md:py-24"><div class="container-power"><p class="text-sm font-bold uppercase tracking-[.25em] text-power-orange">Estamos cerca</p><h1 class="mt-3 text-6xl md:text-8xl">Dónde comprar</h1><p class="mt-6 max-w-2xl text-lg leading-8 text-gray-300">Seis sucursales propias en Santa Cruz de la Sierra. Acercate a la que te quede más cerca.</p></div></section><section class="py-16"><div class="container-power"><div class="grid gap-6 md:grid-cols-2 lg:grid-cols-3">{sucursales.map(([nombre, direccion, telefono, mapa]) => <article class="rounded-2xl bg-white p-6 shadow-power"><p class="text-sm font-bold uppercase tracking-widest text-power-red">Santa Cruz</p><h2 class="mt-2 text-3xl">{nombre}</h2><p class="mt-4 min-h-12 text-sm leading-6 text-gray-600">{direccion}</p><a class="mt-4 block font-bold text-power-ink hover:text-power-red" href={`tel:+591${telefono}`}>+591 {telefono}</a><a class="button-power mt-5 w-full" href={mapa} target="_blank" rel="noopener noreferrer">Cómo llegar</a></article>)}</div><div class="mt-10 rounded-2xl bg-power-mist p-6"><h2 class="text-3xl">Horarios de atención</h2><p class="mt-3 text-gray-600">Lunes a viernes de 08:30 a 12:00 y de 13:30 a 18:00.</p><p class="text-gray-600">Sábado de 08:30 a 12:30.</p></div></div></section></MainLayout>

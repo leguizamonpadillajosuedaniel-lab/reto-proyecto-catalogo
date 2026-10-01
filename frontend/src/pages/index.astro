@@ -1,0 +1,12 @@
+---
+import MainLayout from '../layouts/MainLayout.astro';
+import Hero from '../components/Hero.astro';
+import MotoCard from '../components/MotoCard.astro';
+import type { Moto } from '../types/moto';
+const featured: Moto[] = [
+  { identificador: 1, modelo: 'BROZZ-250', marca: 'Power Motorcycle', categoria: 'Aventura', cilindrada: 250, precio: 58999, imagenLink: '', stock: 8, descripcion: 'Motocicleta deportiva de 250 cc con diseño agresivo y buen rendimiento urbano.' },
+  { identificador: 2, modelo: 'FOX RS-250', marca: 'Power Motorcycle', categoria: 'Deportiva', cilindrada: 250, precio: 62999, imagenLink: '', stock: 6, descripcion: 'Motocicleta deportiva de 250 cc, ligera y orientada a una conducción dinámica.' },
+  { identificador: 3, modelo: 'NXR-250', marca: 'Power Motorcycle', categoria: 'Aventura', cilindrada: 250, precio: 64999, imagenLink: '', stock: 5, descripcion: 'Motocicleta multipropósito de 250 cc para ciudad y recorridos de aventura.' },
+];
+---
+<MainLayout title="Inicio | Power Motorcycle"><Hero /><section class="py-16 md:py-24"><div class="container-power"><div class="mb-10 flex flex-wrap items-end justify-between gap-4"><div><p class="text-sm font-bold uppercase tracking-widest text-power-red">Elegí tu camino</p><h2 class="mt-2 text-5xl">Modelos destacados</h2></div><a href="/catalogo" class="font-bold text-power-red hover:text-power-orange">Ver catálogo completo →</a></div><div class="grid gap-6 md:grid-cols-3">{featured.map((moto) => <MotoCard moto={moto} />)}</div></div></section><section class="bg-power-red py-14 text-white"><div class="container-power grid gap-8 md:grid-cols-3"><div><p class="font-display text-5xl">20</p><p class="mt-1 uppercase tracking-wide">cuotas disponibles</p></div><div><p class="font-display text-5xl">1 año</p><p class="mt-1 uppercase tracking-wide">de garantía</p></div><div><p class="font-display text-5xl">24 h</p><p class="mt-1 uppercase tracking-wide">aprobación de crédito</p></div></div></section></MainLayout>

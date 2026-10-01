@@ -1,0 +1,18 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Saira+Condensed:wght@600;700&display=swap');
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  html { scroll-behavior: smooth; }
+  body { @apply bg-power-mist text-power-ink font-sans; }
+  h1, h2, h3, h4 { @apply font-display uppercase tracking-wide; }
+}
+
+@layer components {
+  .container-power { @apply mx-auto w-[min(1120px,calc(100%-2rem))]; }
+  .button-power { @apply inline-flex items-center justify-center rounded-full bg-power-red px-6 py-3 text-sm font-bold uppercase tracking-wide text-white transition hover:bg-power-orange focus:outline-none focus:ring-2 focus:ring-power-orange focus:ring-offset-2; }
+  .button-dark { @apply inline-flex items-center justify-center rounded-full bg-power-ink px-6 py-3 text-sm font-bold uppercase tracking-wide text-white transition hover:bg-power-red focus:outline-none focus:ring-2 focus:ring-power-orange focus:ring-offset-2; }
+  .field-power { @apply mt-2 w-full rounded-lg border border-gray-300 bg-white px-4 py-3 text-sm outline-none transition focus:border-power-red focus:ring-2 focus:ring-power-red/20; }
+  .error-power { @apply mt-1 text-xs font-medium text-power-red; }
+}

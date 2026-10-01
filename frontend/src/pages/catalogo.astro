@@ -1,0 +1,52 @@
+---
+import MainLayout from '../layouts/MainLayout.astro';
+---
+  <MainLayout title="Catálogo | Sabino's Motorcycle">
+  <section class="bg-power-charcoal py-14 text-white">
+    <div class="container-power">
+      <p class="text-sm font-bold uppercase tracking-widest text-power-orange">Sabino's Motorcycle</p>
+      <h1 class="mt-2 text-6xl">Motos</h1>
+      <p class="mt-3 max-w-xl text-gray-300">10 modelos, de 135 a 250 cc. Elegí por tipo de uso.</p>
+    </div>
+  </section>
+  <section class="py-12">
+    <div class="container-power">
+      <div class="mb-8 flex flex-wrap gap-3" role="group" aria-label="Filtrar por categoría">
+        <button class="category-button button-power px-5 py-2 text-xs" data-category="">Todas</button>
+        <button class="category-button rounded-full border border-gray-300 bg-white px-5 py-2 text-xs font-bold uppercase" data-category="Automaticas">Automáticas</button>
+        <button class="category-button rounded-full border border-gray-300 bg-white px-5 py-2 text-xs font-bold uppercase" data-category="Aventura">Aventura</button>
+        <button class="category-button rounded-full border border-gray-300 bg-white px-5 py-2 text-xs font-bold uppercase" data-category="Deportiva">Deportiva</button>
+        <button class="category-button rounded-full border border-gray-300 bg-white px-5 py-2 text-xs font-bold uppercase" data-category="Scoter">Scooter</button>
+        <button class="category-button rounded-full border border-gray-300 bg-white px-5 py-2 text-xs font-bold uppercase" data-category="utilitarias">Utilitarias</button>
+      </div>
+      <form id="filters" class="mb-10 grid gap-4 rounded-2xl bg-white p-5 shadow-power md:grid-cols-4">
+        <label class="text-sm font-semibold md:col-span-2">Modelo<input name="modelo" class="field-power" placeholder="Ej. BROZZ" /></label>
+        <label class="text-sm font-semibold">Precio mínimo<input name="precioMin" type="number" min="0" class="field-power" /></label>
+        <label class="text-sm font-semibold">Precio máximo<input name="precioMax" type="number" min="0" class="field-power" /></label>
+        <label class="text-sm font-semibold">Disponibilidad<select name="stockDisponible" class="field-power"><option value="">Todas</option><option value="true">En stock</option><option value="false">Agotadas</option></select></label>
+        <div class="flex items-end gap-3 md:col-span-3"><button class="button-power" type="submit">Filtrar</button><button class="rounded-full border border-gray-300 px-6 py-3 text-sm font-bold uppercase" type="reset">Limpiar</button></div>
+      </form>
+      <div id="catalog-status" class="mb-6 text-sm text-gray-500" aria-live="polite">Cargando modelos...</div>
+      <div id="moto-grid" class="grid gap-6 md:grid-cols-2 lg:grid-cols-3"></div>
+    </div>
+  </section>
+  <script>
+    import { api } from '../lib/api';
+    import { motosCatalogo } from '../data/motos';
+    import { motoImage } from '../lib/images';
+    import { modeloSlug, categoriaLabel } from '../lib/modelos';
+
+    const form = document.querySelector<HTMLFormElement>('#filters');
+    const grid = document.querySelector<HTMLDivElement>('#moto-grid');
+    const status = document.querySelector<HTMLDivElement>('#catalog-status');
+    const buttons = [...document.querySelectorAll<HTMLButtonElement>('.category-button')];
+    const escapeHtml = (value: string) => value.replace(/[&<>'"]/g, (char) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', "'": '&#39;', '"': '&quot;' }[char] || char));
+    const render = (motos: typeof motosCatalogo) => { if (!grid) return; grid.innerHTML = motos.map((moto) => `<article class="group overflow-hidden rounded-2xl bg-white shadow-power transition hover:-translate-y-1"><a href="/catalogo/${modeloSlug(moto.modelo)}" class="block"><div class="relative aspect-[4/3] overflow-hidden bg-gray-100"><img src="${motoImage(moto.modelo, moto.imagenLink)}" alt="${escapeHtml(moto.modelo)}" class="h-full w-full object-cover transition duration-500 group-hover:scale-105" loading="lazy"><span class="absolute left-4 top-4 rounded-full bg-power-red px-3 py-1 text-xs font-bold uppercase text-white">${escapeHtml(categoriaLabel(moto.categoria))}</span></div><div class="p-5"><div class="flex justify-between gap-3"><div><h2 class="font-display text-2xl uppercase">${escapeHtml(moto.modelo)}</h2><p class="text-sm text-gray-500">${moto.cilindrada} cc · ${escapeHtml(moto.marca)}</p></div><span class="text-xs font-bold ${moto.stock > 0 ? 'text-green-600' : 'text-power-red'}">${moto.stock > 0 ? 'Disponible' : 'Agotada'}</span></div><p class="mt-4 min-h-10 text-sm text-gray-600">${escapeHtml(moto.descripcion)}</p><p class="mt-4 border-t pt-4 text-lg font-bold text-power-red">Bs ${moto.precio.toLocaleString('es-BO')}</p><p class="mt-3 text-sm font-bold uppercase text-power-red">Ver modelo y ofertas →</p></div></a></article>`).join('') || '<p class="col-span-full py-10 text-center text-gray-500">No hay modelos en esta categoría.</p>'; };
+    const setActive = (category: string) => buttons.forEach((button) => { const active = button.dataset.category === category; button.classList.toggle('button-power', active); button.classList.toggle('bg-white', !active); });
+    async function load() { if (!grid || !status || !form) return; const params = new URLSearchParams(window.location.search); new FormData(form).forEach((value, key) => { if (value) params.set(key, String(value)); }); const category = params.get('categoria') || ''; setActive(category); status.textContent = 'Cargando modelos...'; try { const result = await api.listMotos(params.toString()); render(result.data); status.textContent = `${result.total ?? result.data.length} modelos encontrados`; } catch { const filters = { categoria: category, modelo: params.get('modelo') || '', precioMin: Number(params.get('precioMin')) || 0, precioMax: Number(params.get('precioMax')) || Infinity, stockDisponible: params.get('stockDisponible') }; const fallback = motosCatalogo.filter((moto) => (!filters.categoria || moto.categoria === filters.categoria) && (!filters.modelo || moto.modelo.toLowerCase().includes(filters.modelo.toLowerCase())) && moto.precio >= filters.precioMin && moto.precio <= filters.precioMax && (!filters.stockDisponible || (filters.stockDisponible === 'true' ? moto.stock > 0 : moto.stock === 0))); render(fallback); status.textContent = `${fallback.length} modelos disponibles`; } }
+    buttons.forEach((button) => button.addEventListener('click', () => { const params = new URLSearchParams(window.location.search); if (button.dataset.category) params.set('categoria', button.dataset.category); else params.delete('categoria'); history.pushState({}, '', `${window.location.pathname}${params.toString() ? `?${params}` : ''}`); load(); }));
+    form?.addEventListener('submit', (event) => { event.preventDefault(); const params = new URLSearchParams(window.location.search); new FormData(form).forEach((value, key) => value ? params.set(key, String(value)) : params.delete(key)); history.pushState({}, '', `${window.location.pathname}?${params}`); load(); });
+    form?.addEventListener('reset', () => { setTimeout(() => { history.pushState({}, '', window.location.pathname); load(); }, 0); });
+    window.addEventListener('popstate', load); load();
+  </script>
+</MainLayout>
